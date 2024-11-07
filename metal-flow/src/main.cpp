@@ -71,7 +71,6 @@ int main()
   int i = 0;
   std::vector<float> hostData(arraySize);
   std::generate(hostData.begin(), hostData.end(), [&i]() { return i++; });
-  std::sort(hostData.begin(), hostData.end()); // Sort for binary search
 
   // Simulate "transfer" to GPU by copying to shared memory
   auto start = std::chrono::high_resolution_clock::now();

@@ -32,7 +32,6 @@ int main()
   int i = 0;
   std::vector<float> hostData(arraySize);
   std::generate(hostData.begin(), hostData.end(), [&i]() { return i++; });
-  std::sort(hostData.begin(), hostData.end());
 
   // Allocate memory on GPU
   float* deviceData;
