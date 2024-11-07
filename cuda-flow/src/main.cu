@@ -3,6 +3,7 @@
 #include <cuda_runtime.h>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 // Kernel to raise each element to a power (e.g., square each element)
 __global__ void powerKernel(float* data, int size, float power)
@@ -20,10 +21,20 @@ void checkCudaError(cudaError_t err, const char* msg)
   }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-  // Parameters
-  const int arraySize = 1 << 25;
+  // Check if log size is provided as a command-line argument
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " <log_size (max 30)>" << std::endl;
+    return 1;
+  }
+
+  // Parse log size from command line
+  int logSize = std::atoi(argv[1]);
+  assert(logSize <= 30 && "logSize must be 30 or less"); // Ensure logSize is no more than 30
+  int arraySize = 1 << logSize;                          // Calculate the array size as 2^logSize
+
+  // Other parameters
   const float power = 2.0f;          // Square each element
   const float searchValue = 1024.0f; // Value to search after power operation
   const int N = 10;                  // Number of repetitions
