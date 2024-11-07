@@ -2,13 +2,23 @@
 
 ## Building and Running
 
-To build and run the flow, use the provided `build_and_run.sh` script. Pass in `cpu`, `cuda`, or `metal` as an argument to specify the flow you want to run:
+To build and run the flow with a specified data size, use the provided `build_and_run.sh` script. Pass in `cpu`, `cuda`, or `metal` as the first argument to specify the flow you want to run, followed by the `log_size` parameter to define the data size:
 
 ```bash
-./build_and_run.sh <cpu|cuda|metal>
+./build_and_run.sh <cpu|cuda|metal> <log_size>
 ```
 
-This script will automatically navigate to the specified flow directory, create a build folder, configure and compile the project, and then execute the resulting binary.
+For example, to run the metal flow with log_size of 30:
+
+```bash
+./build_and_run.sh metal 30
+```
+
+This will configure the flow, build it, and then execute the resulting binary with an array size of 2^log_size elements.
+
+> **Note:** Metal flow may require installing the Metal framework by installing xcode or xcode-cli.
+
+This is done via (I think so): `xcode-select --install`
 
 ## POC Goals
 
@@ -59,29 +69,29 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 
 ### Summary of Results for `log_size = 20`: Metal vs. CUDA
 
-| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 0.312 ms             | 0.0002 ms                    | 0.0030 ms                   | 0.0002 ms (0.06%)                          | 0.3152 ms (99.94%)                  | 0.3154 ms                             |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 0.0403 ms               | 0.276 ms             | 7.06e-5 ms                   | 0.0030 ms                   | 0.0404 ms (12.65%)                        | 0.2790 ms (87.35%)                  | 0.3194 ms (accounts for initial copy)   |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 0.275 ms                   | 0.0674 ms           | 0.350 ms                     | 0.0003 ms                   | 0.6250 ms (90.22%)                        | 0.0677 ms (9.78%)                   | 0.6927 ms                             |
+| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 0.312 ms             | 0.0002 ms                    | 0.0030 ms                  | 0.0002 ms (0.06%)                           | 0.3152 ms (99.94%)                  | 0.3154 ms                              |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 0.0403 ms                    | 0.276 ms             | 7.06e-5 ms                   | 0.0030 ms                  | 0.0404 ms (12.65%)                          | 0.2790 ms (87.35%)                  | 0.3194 ms (accounts for initial copy)  |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 0.275 ms                     | 0.0674 ms            | 0.350 ms                     | 0.0003 ms                  | 0.6250 ms (90.22%)                          | 0.0677 ms (9.78%)                   | 0.6927 ms                              |
 
 
 ### Summary of Results for `log_size = 25`: Metal vs. CUDA
 
-| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 2.215 ms             | 0.0004 ms                    | 0.0086 ms                   | 0.0004 ms (0.02%)                          | 2.2237 ms (99.98%)                  | 2.2241 ms                             |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 1.193 ms               | 2.011 ms             | 0.0003 ms                    | 0.0031 ms                   | 1.1931 ms (37.20%)                        | 2.0146 ms (62.80%)                  | 3.2077 ms (accounts for initial copy)   |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 8.744 ms                   | 0.412 ms            | 9.620 ms                     | 0.0005 ms                   | 18.3643 ms (97.80%)                       | 0.4124 ms (2.20%)                   | 18.7767 ms                             |
+| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 2.215 ms             | 0.0004 ms                    | 0.0086 ms                  | 0.0004 ms (0.02%)                           | 2.2237 ms (99.98%)                  | 2.2241 ms                              |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 1.193 ms                     | 2.011 ms             | 0.0003 ms                    | 0.0031 ms                  | 1.1931 ms (37.20%)                          | 2.0146 ms (62.80%)                  | 3.2077 ms (accounts for initial copy)  |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 8.744 ms                     | 0.412 ms             | 9.620 ms                     | 0.0005 ms                  | 18.3643 ms (97.80%)                         | 0.4124 ms (2.20%)                   | 18.7767 ms                             |
 
 
 ### Summary of Results for `log_size = 30`: Metal vs. CUDA
 
-| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 46.545 ms            | 0.0004 ms                    | 0.0059 ms                   | 0.0004 ms (0.0009%)                        | 46.5509 ms (99.9991%)               | 46.5513 ms                             |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 107.549 ms             | 46.456 ms           | 0.0004 ms                    | 0.0056 ms                   | 107.55 ms (69.83%)                        | 46.4618 ms (30.17%)                 | 154.012 ms (accounts for initial copy)   |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 279.670 ms                | 13.357 ms           | 306.174 ms                   | 0.0011 ms                   | 585.844 ms (97.77%)                       | 13.3578 ms (2.23%)                  | 599.202 ms                             |
+| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 46.545 ms            | 0.0004 ms                    | 0.0059 ms                  | 0.0004 ms (0.0009%)                         | 46.5509 ms (99.9991%)               | 46.5513 ms                             |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 107.549 ms                   | 46.456 ms            | 0.0004 ms                    | 0.0056 ms                  | 107.55 ms (69.83%)                          | 46.4618 ms (30.17%)                 | 154.012 ms (accounts for initial copy) |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 279.670 ms                   | 13.357 ms            | 306.174 ms                   | 0.0011 ms                  | 585.844 ms (97.77%)                         | 13.3578 ms (2.23%)                  | 599.202 ms                             |
 
 
 
