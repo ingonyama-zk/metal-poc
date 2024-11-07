@@ -8,7 +8,7 @@
 #include <cassert>
 
 // Toggle this define to switch between generating data on the CPU or directly on the Metal buffer
-// #define GENERATE_ON_METAL_BUFFER
+#define GENERATE_ON_METAL_BUFFER
 
 // Define parameters struct to match shader struct
 struct Parameters {
