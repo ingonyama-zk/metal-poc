@@ -18,7 +18,7 @@ struct Parameters {
 int main()
 {
   // Parameters
-  const int arraySize = 1 << 20;     // 1 million elements
+  const int arraySize = 1 << 25;
   const float power = 2.0f;          // Square each element
   const float searchValue = 1024.0f; // Value to search after power operation
   const int N = 10;                  // Number of repetitions

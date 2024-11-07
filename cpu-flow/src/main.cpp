@@ -3,10 +3,16 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#ifdef WITH_OPENMP
+  #include <omp.h>
+#endif
 
 // Function to raise each element to a power (CPU-only version)
 void powerComputationCPU(std::vector<float>& data, float power)
 {
+#ifdef WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (auto& value : data) {
     value = std::pow(value, power);
   }
@@ -15,7 +21,7 @@ void powerComputationCPU(std::vector<float>& data, float power)
 int main()
 {
   // Parameters
-  const int arraySize = 1 << 20;     // 1 million elements
+  const int arraySize = 1 << 25;
   const float power = 2.0f;          // Square each element
   const float searchValue = 1024.0f; // Value to search after power operation
   const int N = 10;                  // Number of repetitions
@@ -24,7 +30,6 @@ int main()
   std::vector<float> hostData(arraySize);
   int i = 0;
   std::generate(hostData.begin(), hostData.end(), [&i]() { return static_cast<float>(i++); });
-  std::sort(hostData.begin(), hostData.end());
 
   // Timing variables for accumulation
   float totalCpuComputeTime = 0.0f;

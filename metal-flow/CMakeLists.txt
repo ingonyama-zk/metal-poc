@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 project(MetalFlowPoc)
 
-# Optionally set default build type if not provided
-# set(CMAKE_BUILD_TYPE "Profiling" CACHE STRING "Build type for profiling with gprof" FORCE)
-
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Set default build type to Release if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+endif()
 
 # Add the executable
 add_executable(benchmark ${PROJECT_SOURCE_DIR}/src/main.cpp)
