@@ -59,60 +59,63 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 
 ### Summary of Results for `log_size = 20`: Metal vs. CUDA
 
-| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 0.411 ms             | 9.58e-5 ms                   | 0.0018 ms                  | 9.58e-5 ms (0.02%)                          | 0.413 ms (99.98%)                   | 0.413 ms                               |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 0.0371 ms                    | 0.405 ms             | 8.36e-5 ms                   | 0.0015 ms                  | 0.0372 ms (8.39%)                           | 0.406 ms (91.61%)                   | 0.443 ms (accounts for initial copy)   |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 0.296 ms                     | 0.070 ms             | 0.353 ms                     | 0.0006 ms                  | 0.649 ms (90.22%)                           | 0.070 ms (9.78%)                    | 0.720 ms                               |
+| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 0.312 ms             | 0.0002 ms                    | 0.0030 ms                   | 0.0002 ms (0.06%)                          | 0.3152 ms (99.94%)                  | 0.3154 ms                             |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 0.0403 ms               | 0.276 ms             | 7.06e-5 ms                   | 0.0030 ms                   | 0.0404 ms (12.65%)                        | 0.2790 ms (87.35%)                  | 0.3194 ms (accounts for initial copy)   |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 0.275 ms                   | 0.0674 ms           | 0.350 ms                     | 0.0003 ms                   | 0.6250 ms (90.22%)                        | 0.0677 ms (9.78%)                   | 0.6927 ms                             |
+
 
 ### Summary of Results for `log_size = 25`: Metal vs. CUDA
 
-| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 3.514 ms             | 0.0004 ms                    | 0.0058 ms                  | 0.0004 ms (0.01%)                           | 3.5194 ms (99.99%)                  | 3.5198 ms                              |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 3.070 ms                     | 3.022 ms             | 0.0002 ms                    | 0.0090 ms                  | 3.0700 ms (50.32%)                          | 3.0305 ms (49.68%)                  | 6.1004 ms (accounts for initial copy)  |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 8.801 ms                     | 0.416 ms             | 9.708 ms                     | 0.0005 ms                  | 18.5091 ms (97.80%)                         | 0.4161 ms (2.20%)                   | 18.9253 ms                             |
+| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 2.215 ms             | 0.0004 ms                    | 0.0086 ms                   | 0.0004 ms (0.02%)                          | 2.2237 ms (99.98%)                  | 2.2241 ms                             |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 1.193 ms               | 2.011 ms             | 0.0003 ms                    | 0.0031 ms                   | 1.1931 ms (37.20%)                        | 2.0146 ms (62.80%)                  | 3.2077 ms (accounts for initial copy)   |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 8.744 ms                   | 0.412 ms            | 9.620 ms                     | 0.0005 ms                   | 18.3643 ms (97.80%)                       | 0.4124 ms (2.20%)                   | 18.7767 ms                             |
 
 
 ### Summary of Results for `log_size = 30`: Metal vs. CUDA
 
-| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
-| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
-| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 61.300 ms            | 0.0004 ms                    | 0.0070 ms                  | 0.0004 ms (0.0007%)                         | 61.3065 ms (99.999%)                | 61.307 ms                              |
-| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 103.06 ms                    | 134.865 ms           | 0.0009 ms                    | 0.0101 ms                  | 103.061 ms (43.31%)                         | 134.875 ms (56.69%)                 | 237.936 ms (accounts for initial copy) |
-| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 278.011 ms                   | 13.349 ms            | 308.122 ms                   | 0.0015 ms                  | 586.133 ms (97.77%)                         | 13.3506 ms (2.23%)                  | 599.483 ms                             |
-
+| **Configuration**                                              | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+|----------------------------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|---------------------------------------------|--------------------------------------|---------------------------------------|
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**      | N/A                          | 46.545 ms            | 0.0004 ms                    | 0.0059 ms                   | 0.0004 ms (0.0009%)                        | 46.5509 ms (99.9991%)               | 46.5513 ms                             |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 107.549 ms             | 46.456 ms           | 0.0004 ms                    | 0.0056 ms                   | 107.55 ms (69.83%)                        | 46.4618 ms (30.17%)                 | 154.012 ms (accounts for initial copy)   |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)** | 279.670 ms                | 13.357 ms           | 306.174 ms                   | 0.0011 ms                   | 585.844 ms (97.77%)                       | 13.3578 ms (2.23%)                  | 599.202 ms                             |
 
 
 
 ### Analysis
 
-1. **Metal - Direct CPU Write to Metal Buffer** (M1 Pro):
-   - **Memory Transfer Efficiency**: Minimal memory transfer time (0.02% of total time), as there is no need for repeated CPU-GPU copies due to unified memory access.
-   - **Compute Dominance**: Most of the time is spent on computation, leveraging Metal’s shared memory model for seamless access.
-   - **Total Execution Time**: 0.413 ms per iteration, the fastest among the three configurations, demonstrating the benefit of unified memory.
+#### Metal - Direct CPU Write to Metal Buffer (M1 Pro)
+- **Memory Transfer Efficiency**: This configuration achieves almost negligible memory transfer time (less than 0.02% of total time), thanks to Metal's unified memory model, which eliminates the need for repeated CPU-GPU data transfers.
+- **Compute Dominance**: The majority of the execution time is spent on GPU computation, demonstrating the efficiency of Metal’s unified memory for direct access across CPU and GPU.
+- **Total Execution Time**: This configuration consistently performs the fastest across all tested sizes, making it ideal for applications that frequently exchange data between CPU and GPU without the need for explicit data copying.
 
-2. **Metal - CPU Write to CPU Buffer, Initial Copy to Metal** (M1 Pro):
-   - **One-Time Transfer Cost**: An initial CPU-to-GPU transfer of 0.0371 ms adds a modest, upfront overhead without slowing down GPU computation.
-   - **Effective for Compute-Intensive Workloads**: After the initial transfer, memory transfer costs remain low (8.39% of total time), with 91.61% of time spent on computation.
-   - **Total Execution Time**: 0.443 ms per iteration, slightly slower than direct Metal buffer writes but still much faster than CUDA with repeated transfers.
+#### Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)
+- **One-Time Transfer Cost**: An initial CPU-to-GPU data transfer introduces an upfront cost that varies with data size (e.g., 0.0371 ms for `log_size=20`, 1.193 ms for `log_size=25`, and 107.549 ms for `log_size=30`). However, after this one-time transfer, memory transfer costs remain very low, and no further CPU-GPU data copying is needed.
+- **Effective for Compute-Intensive Workloads**: With the initial transfer complete, a large percentage of execution time is dedicated to computation, as the GPU directly accesses data in Metal’s unified memory.
+- **Total Execution Time**: This setup offers high efficiency for compute-heavy tasks, with total times that are competitive but slightly higher than the direct Metal buffer write approach.
 
-3. **CUDA - Repeated CPU-GPU Transfers** (RTX 4080 & Intel i9-13900K):
-   - **High Transfer Overhead**: Memory transfer between CPU and GPU constitutes 90.22% of the total execution time, resulting in significant overhead.
-   - **Compute Bottleneck**: Although the GPU computation is fast (0.07 ms), the repeated data transfer reduces overall efficiency.
-   - **Total Execution Time**: 0.720 ms per iteration, the slowest configuration due to the recurring CPU-GPU memory copy requirement.
+#### CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)
+- **High Transfer Overhead**: This configuration incurs a substantial performance penalty from repeated CPU-GPU transfers every iteration. Memory transfer constitutes around 90% of total execution time, which significantly impacts overall performance.
+- **Compute Bottleneck**: Although the GPU computation itself is fast, the recurring data transfer reduces overall efficiency.
+- **Total Execution Time**: This setup has the slowest total execution time across all tested sizes due to the heavy memory transfer overhead, making it less ideal for workflows that require frequent CPU-GPU data exchanges.
+
+---
 
 ### Key Takeaways
-
-- **Unified Memory Advantage with Metal**: Both Metal configurations outperform CUDA by eliminating or minimizing data transfer overhead. Direct writes to Metal's unified buffer (0.413 ms) demonstrate the lowest latency, showcasing the efficiency of Metal's shared memory model.
-- **CUDA’s Bottleneck with Repeated Transfers**: CUDA’s need for CPU-GPU transfers each iteration significantly impacts performance, with 90% of the time spent on data transfers.
+- **Unified Memory Advantage with Metal**: Both Metal configurations outperform CUDA by eliminating or minimizing data transfer overhead. Direct writes to Metal's unified buffer show the lowest latency, underscoring the efficiency of Metal's shared memory model.
+- **CUDA’s Bottleneck with Repeated Transfers**: The need for repeated CPU-GPU transfers in CUDA significantly impacts performance, with about 90% of total execution time spent on data transfers, highlighting a clear advantage of Metal’s unified memory for mixed CPU-GPU workflows.
 
 ## CPU only reference
 
-For reference, running the power computation and binary search solely on the CPU (with OpenMP) yields the following times for 1G elements:
+For reference, running the power computation and binary search solely on the CPU (with OpenMP) yields the following times for `log_size = 30` elements:
 
 ### Intel i9-13900K
 
 - **Average CPU power computation time**: 288.874 ms
 - **Average CPU binary search time**: 0.0025022 ms
 - **Total average execution time per iteration**: 288.877 ms
+
+> **Note:** For small size, openMP is not effective, therefore only measuring the case of `log_size = 30`.
