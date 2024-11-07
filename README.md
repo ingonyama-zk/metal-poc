@@ -1,5 +1,4 @@
 # Metal POC
-Demonstrate zero cost memory transfer between CPU and GPU in Metal (for Mac M socs)
 
 ## Building and Running
 
@@ -11,33 +10,33 @@ To build and run the flow, use the provided `build_and_run.sh` script. Pass in `
 
 This script will automatically navigate to the specified flow directory, create a build folder, configure and compile the project, and then execute the resulting binary.
 
-# Metal vs CUDA POC: Analyzing Memory Transfer Bottlenecks in Mixed Workloads
+## POC Goals
 
-## 1. POC Goals
-
-This POC compares the performance impact of memory transfer bottlenecks between CPU and GPU in mixed computation workflows using CUDA and Metal. 
+Analyze Memory Transfer Bottlenecks in Mixed Workloads and demonstrate zero cost memory transfer between CPU and GPU in Metal (for apple silicon).
 
 ### Objectives
 - **Highlight CUDA Limitations**: Demonstrate the bottleneck caused by memory transfers in CUDA when CPU computation is required as a fallback.
 - **Show Metal’s unified Memory Advantage**: Emphasize the efficiency of Metal’s unified CPU-GPU memory architecture, which reduces or removes the need for costly memory transfers, providing an incentive for a Metal backend for applications like ICICLE.
 
-## 2. POC Flows
+## POC Flows
 
 ### CUDA Flow
 1. **Allocate Memory on CPU**: Initialize a sorted array of random numbers on the CPU.
-2. **Copy Memory to GPU**: Transfer the sorted array to the GPU (measure time).
-3. **Power Computation on GPU**: Raise each element to a power (e.g., square each element) while maintaining order (measure time).
-4. **Copy Memory Back to CPU**: Transfer the modified array back to the CPU (measure time).
-5. **Binary Search on CPU**: Perform a binary search on the powered array to check for the presence of a specific value (measure time).
+2. **Copy Memory to GPU**: Transfer the sorted array to the GPU (*measure time*).
+3. **Power Computation on GPU**: Raise each element to a power (e.g., square each element) while maintaining order (*measure time*).
+4. **Copy Memory Back to CPU**: Transfer the modified array back to the CPU (*measure time*).
+5. **Binary Search on CPU**: Perform a binary search on the powered array to check for the presence of a specific value (*measure time*).
 6. **Repeat**: Execute this workflow multiple times to accumulate meaningful timing data.
 
 ### Metal Flow
 1. **Allocate Memory and Initialize Data**: Initialize a sorted array of random numbers on unified memory accessible to both CPU and GPU.
-2. **Power Computation on GPU**: Perform the same power operation directly on the unified memory.
-3. **Binary Search on CPU**: Directly perform a binary search on the modified array in unified memory, eliminating the need for data copying.
+2. **Power Computation on GPU**: Perform the same power operation directly on the unified memory (*measure time*).
+3. **Binary Search on CPU**: Directly perform a binary search on the modified array in unified memory, eliminating the need for data copying (*measure time*).
 4. **Repeat**: Iterate this flow to observe performance consistency.
 
-## 3. Define Computations
+In addition, we will initialize data in a CPU only buffer and measure initial copy to CPU-GPU shared buffer (*measure time*).
+
+## Define Computations
 
 ### GPU Computation
    - **Task**: Elementwise power operation on each element in a large, sorted array (e.g., square each element).
@@ -47,7 +46,7 @@ This POC compares the performance impact of memory transfer bottlenecks between 
    - **Task**: Binary search for a specific value within the powered array.
    - **Rationale**: Binary search is inherently sequential and ideal for the CPU, illustrating the efficiency of CPU fallback for branching logic.
 
-## 4. Metal unified Memory Research
+## Metal unified Memory Research
 
 Before implementing the flows, it’s essential to understand Metal’s memory management to gauge potential cost and performance trade-offs:
 - **Zero-Cost unified Memory**: Determine if Metal’s unified memory model truly provides zero-cost access across CPU and GPU.
@@ -56,20 +55,7 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 
 [Check the summary here](./metal-programming-notes.md)
 
-
-## 5. Implementation Steps
-
-### CUDA Flow
-   - **Implement** the CPU-GPU CUDA flow.
-   - **Benchmark** the time for each step: memory allocation, data transfer (to/from GPU), GPU computation, and CPU operation.
-   - **Analyze** the results to confirm the high cost of memory transfers.
-
-### Metal Flow
-   - **Implement** the mixed CPU-GPU workflow using Metal, utilizing unified memory for data access across CPU and GPU.
-   - **Benchmark** and compare with the CUDA results to observe reduced or eliminated transfer costs.
-   - **Performance Comparison**: Assuming GPU computation may be slower on Metal than a high-end CUDA GPU (e.g., NVIDIA RTX 4080), check if transfer savings compensate for this difference.
-
-## 6. Conclusion
+## Results
 
 | **Configuration**                         | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
 |------------------------------------------|------------------------------|-----------------------|------------------------------|-----------------------------|-------------------------------------------|------------------------------------|---------------------------------------|
@@ -98,3 +84,20 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 
 - **Unified Memory Advantage with Metal**: Both Metal configurations outperform CUDA by eliminating or minimizing data transfer overhead. Direct writes to Metal's unified buffer (0.413 ms) demonstrate the lowest latency, showcasing the efficiency of Metal's shared memory model.
 - **CUDA’s Bottleneck with Repeated Transfers**: CUDA’s need for CPU-GPU transfers each iteration significantly impacts performance, with 90% of the time spent on data transfers.
+
+## CPU only reference
+
+For reference, running the power computation and binary search solely on the CPU (single thread) yields the following times:
+
+### M1 pro
+
+- **Average CPU power computation time**: 8.369 ms
+- **Average CPU binary search time**: 0.0010 ms
+- **Total average execution time per iteration**: 8.370 ms
+
+
+### Intel i9-13900K
+
+- **Average CPU power computation time**: 4.553 ms
+- **Average CPU binary search time**: 0.0003 ms
+- **Total average execution time per iteration**: 4.553 ms
