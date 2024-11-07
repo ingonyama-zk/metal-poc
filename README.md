@@ -1,6 +1,16 @@
 # Metal POC
 Demonstrate zero cost memory transfer between CPU and GPU in Metal (for Mac M socs)
 
+## Building and Running
+
+To build and run the flow, use the provided `build_and_run.sh` script. Pass in `cpu`, `cuda`, or `metal` as an argument to specify the flow you want to run:
+
+```bash
+./build_and_run.sh <cpu|cuda|metal>
+```
+
+This script will automatically navigate to the specified flow directory, create a build folder, configure and compile the project, and then execute the resulting binary.
+
 # Metal vs CUDA POC: Analyzing Memory Transfer Bottlenecks in Mixed Workloads
 
 ## 1. POC Goals

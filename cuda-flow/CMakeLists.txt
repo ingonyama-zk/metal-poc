@@ -9,10 +9,10 @@ set(CMAKE_CUDA_STANDARD 17)
 find_package(CUDAToolkit REQUIRED)
 
 # Add the source files
-add_executable(CudaFlow src/main.cu)
+add_executable(benchmark src/main.cu)
 
 # Include dir
-target_include_directories(CudaFlow PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+target_include_directories(benchmark PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 # Link CUDA libraries
-target_link_libraries(CudaFlow PRIVATE ${CUDA_LIBRARIES})
+target_link_libraries(benchmark PRIVATE ${CUDA_LIBRARIES})
