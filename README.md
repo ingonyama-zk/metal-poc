@@ -57,7 +57,7 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 
 ## Results
 
-### 1M float elements
+### Summary of Results for `log_size = 20`: Metal vs. CUDA
 
 | **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
 | ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
@@ -65,7 +65,7 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 | **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 0.0371 ms                    | 0.405 ms             | 8.36e-5 ms                   | 0.0015 ms                  | 0.0372 ms (8.39%)                           | 0.406 ms (91.61%)                   | 0.443 ms (accounts for initial copy)   |
 | **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 0.296 ms                     | 0.070 ms             | 0.353 ms                     | 0.0006 ms                  | 0.649 ms (90.22%)                           | 0.070 ms (9.78%)                    | 0.720 ms                               |
 
-### 32M float elements
+### Summary of Results for `log_size = 25`: Metal vs. CUDA
 
 | **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
 | ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
@@ -74,7 +74,14 @@ Before implementing the flows, it’s essential to understand Metal’s memory m
 | **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 8.801 ms                     | 0.416 ms             | 9.708 ms                     | 0.0005 ms                  | 18.5091 ms (97.80%)                         | 0.4161 ms (2.20%)                   | 18.9253 ms                             |
 
 
-### 1G float elements
+### Summary of Results for `log_size = 30`: Metal vs. CUDA
+
+| **Configuration**                                                       | **CPU to GPU Transfer Time** | **GPU Compute Time** | **GPU to CPU Transfer Time** | **CPU Binary Search Time** | **Total Memory Transfer Time (% of Total)** | **Total Compute Time (% of Total)** | **Total Execution Time per Iteration** |
+| ----------------------------------------------------------------------- | ---------------------------- | -------------------- | ---------------------------- | -------------------------- | ------------------------------------------- | ----------------------------------- | -------------------------------------- |
+| **(1) Metal - Direct CPU Write to Metal Buffer (M1 Pro)**               | N/A                          | 61.300 ms            | 0.0004 ms                    | 0.0070 ms                  | 0.0004 ms (0.0007%)                         | 61.3065 ms (99.999%)                | 61.307 ms                              |
+| **(2) Metal - CPU Write to CPU Buffer, Initial Copy to Metal (M1 Pro)** | 103.06 ms                    | 134.865 ms           | 0.0009 ms                    | 0.0101 ms                  | 103.061 ms (43.31%)                         | 134.875 ms (56.69%)                 | 237.936 ms (accounts for initial copy) |
+| **(3) CUDA - Repeated CPU-GPU Transfers (RTX 4080 & Intel i9-13900K)**  | 278.011 ms                   | 13.349 ms            | 308.122 ms                   | 0.0015 ms                  | 586.133 ms (97.77%)                         | 13.3506 ms (2.23%)                  | 599.483 ms                             |
+
 
 
 

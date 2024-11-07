@@ -8,7 +8,7 @@
 #include <cassert>
 
 // Toggle this define to switch between generating data on the CPU or directly on the Metal buffer
-#define GENERATE_ON_METAL_BUFFER
+// #define GENERATE_ON_METAL_BUFFER
 
 // Define parameters struct to match shader struct
 struct Parameters {
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   float totalGpuToCpuTime = 0.0f;
   float totalCpuComputeTime = 0.0f;
 
-  for (int i = 0; i < N; ++i) {
+  for (int i = 0; i <= N; ++i) {
     auto start = std::chrono::high_resolution_clock::now();
     // Launch GPU kernel
     MTL::CommandBuffer* commandBuffer = cmdQueue->commandBuffer();
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
     commandBuffer->waitUntilCompleted();
     auto end = std::chrono::high_resolution_clock::now();
     float gpuComputeTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalGpuComputeTime += gpuComputeTime;
+    if (i > 0) totalGpuComputeTime += gpuComputeTime;
     std::cout << "Iteration " << i + 1 << " - GPU computation time: " << gpuComputeTime << " ms\n";
 
     // Simulate "transfer" back to CPU by accessing shared memory directly
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
     float* gpuResultData = static_cast<float*>(bufferData->contents());
     end = std::chrono::high_resolution_clock::now();
     float gpuToCpuTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalGpuToCpuTime += gpuToCpuTime;
+    if (i > 0) totalGpuToCpuTime += gpuToCpuTime;
     std::cout << "Iteration " << i + 1 << " - GPU to CPU transfer time: " << gpuToCpuTime << " ms\n";
 
     // Perform binary search on GPU data directly
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
     bool found = std::binary_search(gpuResultData, gpuResultData + arraySize, searchValue);
     end = std::chrono::high_resolution_clock::now();
     float cpuComputeTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalCpuComputeTime += cpuComputeTime;
+    if (i > 0) totalCpuComputeTime += cpuComputeTime;
     std::cout << "Iteration " << i + 1 << " - CPU binary search time: " << cpuComputeTime << " ms\n";
     std::cout << "Iteration " << i + 1 << " - Value " << (found ? "found" : "not found") << " in the array.\n";
   }

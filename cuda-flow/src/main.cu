@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   float totalGpuToCpuTime = 0.0f;
   float totalCpuComputeTime = 0.0f;
 
-  for (int i = 0; i < N; ++i) {
+  for (int i = 0; i <= N; ++i) {
     // Copy data to GPU
     auto start = std::chrono::high_resolution_clock::now();
     checkCudaError(
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
       "Failed to copy data to GPU");
     auto end = std::chrono::high_resolution_clock::now();
     float cpuToGpuTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalCpuToGpuTime += cpuToGpuTime;
+    if (i > 0) totalCpuToGpuTime += cpuToGpuTime;
     std::cout << "Iteration " << i + 1 << " - CPU to GPU transfer time: " << cpuToGpuTime << " ms\n";
 
     // Launch kernel to perform power operation
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     checkCudaError(cudaDeviceSynchronize(), "Kernel execution failed");
     end = std::chrono::high_resolution_clock::now();
     float gpuComputeTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalGpuComputeTime += gpuComputeTime;
+    if (i > 0) totalGpuComputeTime += gpuComputeTime;
     std::cout << "Iteration " << i + 1 << " - GPU computation time: " << gpuComputeTime << " ms\n";
 
     // Copy result back to CPU
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
       "Failed to copy data to CPU");
     end = std::chrono::high_resolution_clock::now();
     float gpuToCpuTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalGpuToCpuTime += gpuToCpuTime;
+    if (i > 0) totalGpuToCpuTime += gpuToCpuTime;
     std::cout << "Iteration " << i + 1 << " - GPU to CPU transfer time: " << gpuToCpuTime << " ms\n";
 
     // Perform binary search on CPU
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     bool found = std::binary_search(hostData.begin(), hostData.end(), searchValue);
     end = std::chrono::high_resolution_clock::now();
     float cpuComputeTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalCpuComputeTime += cpuComputeTime;
+    if (i > 0) totalCpuComputeTime += cpuComputeTime;
     std::cout << "Iteration " << i + 1 << " - CPU binary search time: " << cpuComputeTime << " ms\n";
     std::cout << "Iteration " << i + 1 << " - Value " << (found ? "found" : "not found") << " in the array.\n";
   }

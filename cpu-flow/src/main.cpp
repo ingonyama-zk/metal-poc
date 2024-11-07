@@ -46,13 +46,13 @@ int main(int argc, char* argv[])
   float totalCpuComputeTime = 0.0f;
   float totalCpuBinarySearchTime = 0.0f;
 
-  for (int i = 0; i < N; ++i) {
+  for (int i = 0; i <= N; ++i) {
     // Perform power computation on the CPU
     auto start = std::chrono::high_resolution_clock::now();
     powerComputationCPU(hostData, power);
     auto end = std::chrono::high_resolution_clock::now();
     float cpuComputeTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalCpuComputeTime += cpuComputeTime;
+    if (i > 0) totalCpuComputeTime += cpuComputeTime;
     std::cout << "Iteration " << i + 1 << " - CPU power computation time: " << cpuComputeTime << " ms\n";
 
     // Perform binary search on CPU
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     bool found = std::binary_search(hostData.begin(), hostData.end(), searchValue);
     end = std::chrono::high_resolution_clock::now();
     float cpuBinarySearchTime = std::chrono::duration<float, std::milli>(end - start).count();
-    totalCpuBinarySearchTime += cpuBinarySearchTime;
+    if (i > 0) totalCpuBinarySearchTime += cpuBinarySearchTime;
     std::cout << "Iteration " << i + 1 << " - CPU binary search time: " << cpuBinarySearchTime << " ms\n";
     std::cout << "Iteration " << i + 1 << " - Value " << (found ? "found" : "not found") << " in the array.\n";
   }
