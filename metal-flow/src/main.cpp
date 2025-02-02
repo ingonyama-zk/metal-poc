@@ -34,6 +34,9 @@ int main(int argc, char* argv[])
   const float searchValue = 1024.0f; // Value to search after power operation
   const int N = 10;                  // Number of repetitions
 
+  // Create autorelease pool because we are using Objective-C objects (some macOS versions may not require this)
+  NS::AutoreleasePool* p_pool = NS::AutoreleasePool::alloc()->init();
+
   // Initialize Metal device and command queue
   MTL::Device* device = MTL::CreateSystemDefaultDevice();
   if (!device) {
@@ -172,6 +175,7 @@ int main(int argc, char* argv[])
   library->release();
   cmdQueue->release();
   device->release();
+  p_pool->release();
 
   return 0;
 }
