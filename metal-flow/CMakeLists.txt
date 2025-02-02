@@ -24,6 +24,7 @@ target_link_libraries(benchmark
     PRIVATE
         "-framework Metal"
         "-framework Foundation"
+        "-framework CoreGraphics"
 )
 
 # Specify the include directories
